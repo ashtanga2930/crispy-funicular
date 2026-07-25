@@ -37,32 +37,40 @@
     // Replace with your live ngrok URL from Colab
     const API_BASE = "https://reliance-reselect-dragonfly.ngrok-free.dev"; 
 
-    async function processVideo() {
-      const url = document.getElementById('videoUrl').value;
-      const btn = document.getElementById('btn');
-      if(!url) return alert("Please enter a YouTube link!");
+  async function processVideo() {
+  const url = document.getElementById('videoUrl').value;
+  const btn = document.getElementById('btn');
+  if(!url) return alert("Please enter a YouTube link!");
 
-      btn.innerText = "Analyzing Virality & Rendering...";
-      btn.disabled = true;
+  btn.innerText = "Analyzing Virality & Rendering...";
+  btn.disabled = true;
 
-      try {
-        const res = await fetch(`${API_BASE}/generate-clip`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ video_url: url })
-        });
-        const data = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/generate-clip`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ video_url: url })
+    });
+    
+    if (!res.ok) throw new Error("Backend processing failed.");
+    
+    const data = await res.json();
 
-        document.getElementById('scoreBadge').innerText = `${data.virality_score}/100`;
-        document.getElementById('player').src = `${API_BASE}/get-video?t=${Date.now()}`;
-        document.getElementById('results').classList.remove('hidden');
-      } catch (err) {
-        alert("Processing failed. Make sure your Colab notebook server is running!");
-      } finally {
-        btn.innerText = "Generate Viral Short";
-        btn.disabled = false;
-      }
-    }
+    document.getElementById('scoreBadge').innerText = `${data.virality_score}/100`;
+    
+    // Set the complete absolute video URL with a cache-busting timestamp
+    const videoPlayer = document.getElementById('player');
+    videoPlayer.src = `${API_BASE}/get-video?t=${Date.now()}`;
+    videoPlayer.load(); // Force the HTML5 player to load the new video stream
+    
+    document.getElementById('results').classList.remove('hidden');
+  } catch (err) {
+    alert("Processing failed. Make sure your Colab notebook server is running!");
+  } finally {
+    btn.innerText = "Generate Viral Short";
+    btn.disabled = false;
+  }
+}
   </script>
 </body>
 </html>
