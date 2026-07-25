@@ -45,12 +45,14 @@
   btn.innerText = "Analyzing Virality & Rendering...";
   btn.disabled = true;
 
-  try {
-    const res = await fetch(`${API_BASE}/generate-clip`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ video_url: url })
-    });
+  const res = await fetch(`${API_BASE}/generate-clip`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true' // <--- MUST BE HERE FOR NGROK
+    },
+    body: JSON.stringify({ video_url: url })
+  });
     
     if (!res.ok) throw new Error("Backend processing failed.");
     
