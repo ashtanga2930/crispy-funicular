@@ -9,7 +9,6 @@
 <body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
 
   <div class="max-w-xl w-full bg-slate-800 rounded-xl shadow-2xl p-6 border border-slate-700">
-    <!-- Header -->
     <h1 class="text-3xl font-extrabold text-center mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
       AI Viral Clip Generator
     </h1>
@@ -17,7 +16,6 @@
       Paste a YouTube link to extract the most engaging 30-second short clip.
     </p>
 
-    <!-- Input Section -->
     <div class="space-y-4">
       <div>
         <label for="videoUrl" class="block text-xs font-semibold uppercase text-slate-400 mb-1">YouTube URL</label>
@@ -29,16 +27,15 @@
         />
       </div>
 
+      <!-- No inline onclick here anymore -->
       <button 
         id="btn" 
-        onclick="processVideo()" 
         class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Generate Viral Short
       </button>
     </div>
 
-    <!-- Results Display Section -->
     <div id="results" class="hidden mt-8 border-t border-slate-700 pt-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold">Virality Score:</h2>
@@ -56,10 +53,17 @@
   </div>
 
   <script>
-    // ⚠️ UPDATE THIS WITH YOUR ACTIVE NGROK URL (NO TRAILING SLASH)
-    const API_BASE = "https://reliance-reselect-dragonfly.ngrok-free.dev";
+    // UPDATE THIS WITH YOUR LIVE NGROK URL (NO TRAILING SLASH)
+    const API_BASE = "https://YOUR-NGROK-URL.ngrok-free.dev";
 
-    async function processVideo() {
+    document.addEventListener("DOMContentLoaded", function () {
+      const btn = document.getElementById('btn');
+      if (btn) {
+        btn.addEventListener('click', handleProcessVideo);
+      }
+    });
+
+    async function handleProcessVideo() {
       const urlInput = document.getElementById('videoUrl');
       const btn = document.getElementById('btn');
       const resultsDiv = document.getElementById('results');
@@ -73,7 +77,6 @@
         return;
       }
 
-      // 1. Instantly update UI loading state
       btn.innerText = "Analyzing Virality & Rendering...";
       btn.disabled = true;
 
@@ -94,21 +97,15 @@
 
         const data = await res.json();
 
-        // 2. Set score badge
         scoreBadge.innerText = `${data.virality_score}/100`;
-
-        // 3. Load video source with timestamp to prevent browser caching issues
         videoPlayer.src = `${API_BASE}/get-video?t=${Date.now()}`;
         videoPlayer.load();
-
-        // 4. Reveal results card
         resultsDiv.classList.remove('hidden');
 
       } catch (err) {
         console.error("Error generating clip:", err);
-        alert(`Processing failed: ${err.message}\n\nMake sure your Colab notebook is running and API_BASE is updated.`);
+        alert(`Processing failed: ${err.message}`);
       } finally {
-        // 5. Reset button UI
         btn.innerText = "Generate Viral Short";
         btn.disabled = false;
       }
