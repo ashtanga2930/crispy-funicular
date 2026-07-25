@@ -56,7 +56,7 @@
   </div>
 
   <script>
-    
+    // ⚠️ UPDATE THIS WITH YOUR ACTIVE NGROK URL (NO TRAILING SLASH)
     const API_BASE = "https://reliance-reselect-dragonfly.ngrok-free.dev";
 
     async function processVideo() {
@@ -82,7 +82,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true' // Vital for bypassing ngrok warning screen
+            'ngrok-skip-browser-warning': 'true'
           },
           body: JSON.stringify({ video_url: url })
         });
@@ -97,7 +97,7 @@
         // 2. Set score badge
         scoreBadge.innerText = `${data.virality_score}/100`;
 
-        // 3. Load video source with timestamp to avoid browser caching issues
+        // 3. Load video source with timestamp to prevent browser caching issues
         videoPlayer.src = `${API_BASE}/get-video?t=${Date.now()}`;
         videoPlayer.load();
 
